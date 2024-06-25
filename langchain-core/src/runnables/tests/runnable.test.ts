@@ -28,6 +28,7 @@ import { RunnableSequence, RunnableLambda } from "../base.js";
 import { RouterRunnable } from "../router.js";
 import { RunnableConfig } from "../config.js";
 import { JsonOutputParser } from "../../output_parsers/json.js";
+import { traceable } from "langsmith/traceable";
 
 test("Test batch", async () => {
   const llm = new FakeLLM({});
@@ -75,11 +76,39 @@ test("Test chat model stream", async () => {
   }
 });
 
-test("Pipe from one runnable to the next", async () => {
+test.only("Pipe from one runnable to the next", async () => {
   const promptTemplate = PromptTemplate.fromTemplate("{input}");
   const llm = new FakeLLM({});
   const runnable = promptTemplate.pipe(llm);
   const result = await runnable.invoke({ input: "Hello world!" });
+  console.log(result);
+  expect(result).toBe("Hello world!");
+});
+
+test("Pipe from one runnable to the next", async () => {
+  const promptTemplate = PromptTemplate.fromTemplate("{input}");
+  const llm = new FakeLLM({});
+  const runnable = promptTemplate.pipe(llm).pipe((res) => {
+    const test = traceable((val: string) => {
+      console.log(val);
+      return val;
+    });
+    return test(res);
+  });
+  const result = await runnable.invoke({ input: "Hello world!" });
+  console.log(result);
+  expect(result).toBe("Hello world!");
+});
+
+test("Pipe from one runnable to the next", async () => {
+  const promptTemplate = PromptTemplate.fromTemplate("{input}");
+  const llm = new FakeLLM({});
+  const runnable = promptTemplate.pipe(llm)
+  const test = traceable((val: {input: string}) => {
+    const res = runnable.invoke(val);
+    return res;
+  });
+  const result = await test({ input: "Hello world!" });
   console.log(result);
   expect(result).toBe("Hello world!");
 });

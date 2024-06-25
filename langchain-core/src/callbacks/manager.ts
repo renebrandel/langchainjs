@@ -9,7 +9,6 @@ import {
   NewTokenIndices,
 } from "./base.js";
 import { ConsoleCallbackHandler } from "../tracers/console.js";
-import { getTracingV2CallbackHandler } from "../tracers/initialize.js";
 import { type BaseMessage } from "../messages/base.js";
 import { getBufferString } from "../messages/utils.js";
 import { getEnvironmentVariable } from "../utils/env.js";
@@ -20,6 +19,8 @@ import {
 import { consumeCallback } from "./promises.js";
 import { Serialized } from "../load/serializable.js";
 import type { DocumentInterface } from "../documents/document.js";
+import { AsyncLocalStorageProviderSingleton } from "../singletons/index.js";
+import { RunTree } from "langsmith";
 
 if (
   /* #__PURE__ */ getEnvironmentVariable("LANGCHAIN_TRACING_V2") === "true" &&
@@ -554,6 +555,8 @@ export class CallbackManager
 
   public _parentRunId?: string;
 
+  tracingRunTree: RunTree;
+
   constructor(
     parentRunId?: string,
     options?: {
@@ -1004,21 +1007,24 @@ export class CallbackManager
         const consoleHandler = new ConsoleCallbackHandler();
         callbackManager.addHandler(consoleHandler, true);
       }
-      if (
-        tracingEnabled &&
-        !callbackManager.handlers.some(
-          (handler) => handler.name === "langchain_tracer"
-        )
-      ) {
-        if (tracingV2Enabled) {
-          const tracerV2 = await getTracingV2CallbackHandler();
-          callbackManager.addHandler(tracerV2, true);
+      // if (
+      //   tracingEnabled &&
+      //   !callbackManager.handlers.some(
+      //     (handler) => handler.name === "langchain_tracer"
+      //   )
+      // ) {
+      //   if (tracingV2Enabled) {
+      //     const tracerV2 = await getTracingV2CallbackHandler();
+      //     callbackManager.addHandler(tracerV2, true);
 
-          // handoff between langchain and langsmith/traceable
-          // override the parent run ID
-          callbackManager._parentRunId =
-            tracerV2.getTraceableRunTree()?.id ?? callbackManager._parentRunId;
-        }
+      //     // handoff between langchain and langsmith/traceable
+      //     // override the parent run ID
+      //     callbackManager._parentRunId =
+      //       tracerV2.getTraceableRunTree()?.id ?? callbackManager._parentRunId;
+      //   }
+      // }
+      if (tracingEnabled) {
+        callbackManager.tracingRunTree = AsyncLocalStorageProviderSingleton.getInstance().getStore();
       }
     }
     if (inheritableTags || localTags) {

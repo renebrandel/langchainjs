@@ -55,6 +55,7 @@ import {
   isIterableIterator,
   isIterator,
 } from "./iter.js";
+import { RunTree } from "langsmith";
 
 export { type RunnableInterface, RunnableBatchOptions };
 
@@ -2227,8 +2228,9 @@ export class RunnableLambda<RunInput, RunOutput> extends Runnable<
         callbacks: runManager?.getChild(),
         recursionLimit: (config?.recursionLimit ?? DEFAULT_RECURSION_LIMIT) - 1,
       });
+      const runTree = RunTree.fromRunnableConfig(childConfig, { name: this.getName() });
       void AsyncLocalStorageProviderSingleton.getInstance().run(
-        childConfig,
+        runTree,
         async () => {
           try {
             let output = await this.func(input, {

@@ -10138,7 +10138,7 @@ __metadata:
     jest: ^29.5.0
     jest-environment-node: ^29.6.4
     js-tiktoken: ^1.0.12
-    langsmith: ~0.1.30
+    langsmith: ../../langsmith-sdk/js
     ml-distance: ^4.0.0
     ml-matrix: ^6.10.4
     mustache: ^4.2.0
@@ -28839,6 +28839,31 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"langsmith@file:../../langsmith-sdk/js::locator=%40langchain%2Fcore%40workspace%3Alangchain-core":
+  version: 0.1.33
+  resolution: "langsmith@file:../../langsmith-sdk/js#../../langsmith-sdk/js::hash=a664aa&locator=%40langchain%2Fcore%40workspace%3Alangchain-core"
+  dependencies:
+    "@types/uuid": ^9.0.1
+    commander: ^10.0.1
+    lodash.set: ^4.3.2
+    p-queue: ^6.6.2
+    p-retry: 4
+    uuid: ^9.0.0
+  peerDependencies:
+    "@langchain/core": "*"
+    langchain: "*"
+    openai: "*"
+  peerDependenciesMeta:
+    "@langchain/core":
+      optional: true
+    langchain:
+      optional: true
+    openai:
+      optional: true
+  checksum: 0580fafab6299ba2ce52af51ea12012c03b1808a3555639eb85671a86dd7cd0e1a74ae5f62998d4ae488185a6ad148b270c2dc86b04b83ca71b7a1e7c9235895
+  languageName: node
+  linkType: hard
+
 "langsmith@npm:^0.1.30, langsmith@npm:~0.1.30, langsmith@npm:~0.1.7":
   version: 0.1.30
   resolution: "langsmith@npm:0.1.30"
@@ -29274,6 +29299,13 @@ __metadata:
   version: 4.2.0
   resolution: "lodash.pullall@npm:4.2.0"
   checksum: 7a5fbaedf186ec197ce1e0b9ba1d88a89773ebaf6a8291c7d273838cac59cb3b339cf36ef00e94172862ee84d2304c38face161846f08f5581d0553dcbdcd090
+  languageName: node
+  linkType: hard
+
+"lodash.set@npm:^4.3.2":
+  version: 4.3.2
+  resolution: "lodash.set@npm:4.3.2"
+  checksum: a9122f49eef9f2d0fc9061a33d87f8e5b8c6b23d46e8b9e9ce1529d3588d79741bd1145a3abdfa3b13082703e65af27ff18d8a07bfc22b9be32f3fc36f763f70
   languageName: node
   linkType: hard
 
